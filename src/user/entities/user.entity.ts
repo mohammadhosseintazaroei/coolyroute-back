@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { UserModel } from '../models/user.model';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class UserEntity extends UserModel {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,6 +18,7 @@ export class UserEntity extends UserModel {
   @Column('text', { nullable: true })
   email?: string;
 
+  @Exclude()
   @Column({ nullable: true, type: 'text', default: null })
   activationCode: string | null;
 }
