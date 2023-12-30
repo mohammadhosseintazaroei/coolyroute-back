@@ -23,6 +23,7 @@ type UserModel {
   lastName: String
   phoneNumber: String!
   email: String!
+  activationCode: String
 }
 
 type Query {

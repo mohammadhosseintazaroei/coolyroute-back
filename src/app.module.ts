@@ -1,14 +1,14 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AuthController } from './Authentication/controller/auth.controller';
+import { AuthController } from './auth/controller/auth.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
-import { AuthModule } from './Authentication/auth.module';
-import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
-import { UsersModule } from './users/users.module';
-import { UsersEntity } from './users/entities/users.entity';
+import { AuthModule } from './auth/auth.module';
+import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
+import { UsersModule } from './user/user.module';
+import { UserEntity } from './user/entities/user.entity';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -38,7 +38,7 @@ const gqlConfig = [
       password: '123qwe',
       database: 'postgres',
       schema: 'ecotech',
-      entities: [UsersEntity],
+      entities: [UserEntity],
       synchronize: true,
     }),
   ],

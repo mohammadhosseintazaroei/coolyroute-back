@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { UserModel } from '../models/user.model';
 
 @Entity()
-export class UsersEntity extends UserModel {
+export class UserEntity extends UserModel {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,4 +17,7 @@ export class UsersEntity extends UserModel {
 
   @Column('text', { nullable: true })
   email?: string;
+
+  @Column({ nullable: true, type: 'text', default: null })
+  activationCode: string | null;
 }
