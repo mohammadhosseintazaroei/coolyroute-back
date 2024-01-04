@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
 import { UsersModule } from './user/user.module';
 import { UserEntity } from './user/entities/user.entity';
+import { ConfigModule } from '@nestjs/config';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -27,15 +28,20 @@ const gqlConfig = [
 ];
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: !process.env.NODE_ENV
+        ? '.env'
+        : `.env.${process.env.NODE_ENV}`,
+    }),
     AuthModule,
     UsersModule,
     ...gqlConfig,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
       username: 'postgres',
-      password: '123qwe',
+      password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'ecotech',
       entities: [UserEntity],
