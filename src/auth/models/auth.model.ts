@@ -1,6 +1,6 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 
-@ObjectType({ description: 'recipe ' })
+@ObjectType({ description: 'auth model' })
 export class AuthModel {
   @Field(() => ID)
   id: string;
@@ -16,4 +16,24 @@ export class AuthModel {
 
   @Field(() => [String])
   ingredients?: string[];
+}
+@ObjectType({ description: 'Login Verfification ' })
+export class LoginVerification {
+  @Field(() => Number)
+  status: number;
+
+  @Field(() => String)
+  message: string;
+}
+
+@ObjectType({ description: 'User Verify ' })
+export class UserVeify {
+  @Field(() => Number)
+  status: number;
+
+  @Field(() => String)
+  message: string;
+
+  @Field(() => String, { nullable: true })
+  access_token?: string;
 }

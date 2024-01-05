@@ -1,8 +1,8 @@
 export interface IUser {
   id: number;
   firstName: string;
-  lsatName: string;
+  lastName: string;
   phoneNumber: string;
   email: string;
-  activationcode: string;
+  activationCode: string;
 }

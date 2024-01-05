@@ -1,15 +1,19 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { AuthModel } from '../models/auth.model';
+import { AuthService } from '../auth.service';
+import { LoginDto, VerifyOtp } from '../dto/auth.dto';
+import { LoginVerification, UserVeify } from '../models/auth.model';
 
-@Resolver(() => AuthModel)
+@Resolver('Auth')
 export class AuthResolver {
-  @Query(() => AuthModel)
-  async recipes(@Args('id') id: string): Promise<AuthModel> {
-    return {
-      id: id,
-      title: '',
-      description: 'DFAS',
-      creationDate: new Date(),
-    };
+  constructor(private authService: AuthService) {}
+
+  @Query(() => LoginVerification)
+  async login(@Args('user') user: LoginDto): Promise<LoginVerification> {
+    return await this.authService.login(user);
+  }
+
+  @Query(() => UserVeify)
+  async verifyOtp(@Args('user') user: VerifyOtp): Promise<UserVeify> {
+    return await this.authService.verifyUser(user);
   }
 }
