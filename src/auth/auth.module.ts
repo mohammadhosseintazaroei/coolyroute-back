@@ -4,20 +4,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/user/user.module';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './resolver/auth.resolver';
+import { JwtStrategy } from './jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { jwtConstants } from './constants';
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     forwardRef(() => UsersModule),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: '60s' },
-        };
-      },
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '6000h' },
     }),
   ],
-  providers: [AuthResolver, AuthService],
+  providers: [AuthResolver, AuthService, JwtStrategy],
 })
 export class AuthModule {}

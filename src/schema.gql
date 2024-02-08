@@ -30,6 +30,7 @@ type Query {
   login(user: LoginDto!): LoginVerification!
   verifyOtp(user: VerifyOtp!): UserVeify!
   getAllUsers: [UserModel!]!
+  userProfile: UserModel!
 }
 
 input LoginDto {

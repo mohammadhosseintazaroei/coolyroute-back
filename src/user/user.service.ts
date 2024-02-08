@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
+import { VerifyOtp } from 'src/auth/dto/auth.dto';
 
 @Injectable()
 export class UserService {
@@ -27,5 +28,10 @@ export class UserService {
       status: HttpStatus.CREATED,
       message: 'user created successfuly',
     };
+  }
+
+  async profile(user: VerifyOtp): Promise<UserEntity> {
+    const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
+    if (foundUser) return foundUser;
   }
 }

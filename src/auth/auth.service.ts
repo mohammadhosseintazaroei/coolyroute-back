@@ -49,12 +49,13 @@ export class AuthService {
       await this.userService.registerUserByPhoneNumber(userInput.phoneNumber);
     }
     const now = await new Date().getTime();
-    const remainingSeconds = now - user.otpGeneratedTime.getTime();
 
     if (
+      user &&
       user.activationCode &&
       now - user.otpGeneratedTime.getTime() < 2 * 60 * 1000
     ) {
+      const remainingSeconds = now - user.otpGeneratedTime.getTime();
       return {
         status: HttpStatus.CREATED,
         message: `please wait for ${Math.floor(
@@ -88,10 +89,11 @@ export class AuthService {
     const access_token = this.jwtService.sign(user);
     return {
       status: HttpStatus.OK,
-      message: 'verified successfyly',
+      message: 'verified successfuly',
       access_token,
     };
   }
+
   private deriveSecret(uniqueKey: string) {
     return crypto
       .createHmac('sha256', this.jwtSecret)

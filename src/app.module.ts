@@ -1,15 +1,16 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AuthController } from './auth/controller/auth.controller';
-import { AppService } from './app.service';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { AuthController } from './auth/controller/auth.controller';
 import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
-import { UsersModule } from './user/user.module';
 import { UserEntity } from './user/entities/user.entity';
-import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './user/user.module';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -24,15 +25,18 @@ const gqlConfig = [
         }),
       ],
     },
+    context: ({ req, res }) => ({ req, res }),
   }),
 ];
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule.forRoot({
       envFilePath: !process.env.NODE_ENV
         ? '.env'
         : `.env.${process.env.NODE_ENV}`,
     }),
+
     AuthModule,
     UsersModule,
     ...gqlConfig,
