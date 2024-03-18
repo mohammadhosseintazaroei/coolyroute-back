@@ -11,6 +11,7 @@ import { AuthController } from './auth/controller/auth.controller';
 import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
 import { UserEntity } from './user/entities/user.entity';
 import { UsersModule } from './user/user.module';
+import { CourseModule } from './courses/coures.module';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -39,6 +40,7 @@ const gqlConfig = [
 
     AuthModule,
     UsersModule,
+    CourseModule,
     ...gqlConfig,
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -50,6 +52,7 @@ const gqlConfig = [
       schema: 'ecotech',
       entities: [UserEntity],
       synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
   controllers: [AuthController],
