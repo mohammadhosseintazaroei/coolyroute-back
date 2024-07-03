@@ -3,6 +3,7 @@ export interface IEvent {
   title: string;
   description?: string;
   price: number;
+  date: Date;
   startTime: number;
   endTime: number;
 }

@@ -16,6 +16,9 @@ export class EventEntity implements IEvent {
   price: number;
 
   @Column()
+  date: Date;
+
+  @Column()
   startTime: number;
 
   @Column()
