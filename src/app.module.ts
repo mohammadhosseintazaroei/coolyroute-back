@@ -11,7 +11,7 @@ import { AuthController } from './auth/controller/auth.controller';
 import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
 import { UserEntity } from './user/entities/user.entity';
 import { UsersModule } from './user/user.module';
-import { CourseModule } from './courses/coures.module';
+import { EventModule } from './events/event.module';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -40,7 +40,7 @@ const gqlConfig = [
 
     AuthModule,
     UsersModule,
-    CourseModule,
+    EventModule,
     ...gqlConfig,
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -49,7 +49,7 @@ const gqlConfig = [
       username: 'postgres',
       password: process.env.DB_PASSWORD,
       database: 'postgres',
-      schema: 'ecotech',
+      schema: 'coolyroute',
       entities: [UserEntity],
       synchronize: true,
       autoLoadEntities: true,

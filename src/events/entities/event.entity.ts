@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ICourse } from '../interfaces/course.interface';
+import { IEvent } from '../interfaces/event.interface';
 
 @Entity()
-export class CourseEntity implements ICourse {
+export class EventEntity implements IEvent {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,4 +14,13 @@ export class CourseEntity implements ICourse {
 
   @Column()
   price: number;
+
+  @Column()
+  date: Date;
+
+  @Column()
+  startTime: number;
+
+  @Column()
+  endTime: number;
 }
