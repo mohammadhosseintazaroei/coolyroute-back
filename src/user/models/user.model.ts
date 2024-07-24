@@ -1,4 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, OmitType } from '@nestjs/graphql';
+import e from 'express';
 
 @ObjectType()
 export class UserModel {
@@ -14,9 +15,11 @@ export class UserModel {
   @Field()
   phoneNumber: string;
 
-  @Field()
+  @Field({ nullable: true })
   email?: string;
 
   @Field({ nullable: true })
   activationCode?: string;
 }
+@ObjectType()
+export class UserModelSafe extends OmitType(UserModel, ['activationCode']) {}

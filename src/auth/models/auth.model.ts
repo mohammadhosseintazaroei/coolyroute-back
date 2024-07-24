@@ -1,4 +1,5 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { UserModelSafe } from 'src/user/models/user.model';
 
 @ObjectType({ description: 'auth model' })
 export class AuthModel {
@@ -36,4 +37,7 @@ export class UserVeify {
 
   @Field(() => String, { nullable: true })
   access_token?: string;
+
+  @Field(() => UserModelSafe, { nullable: true })
+  user?: UserModelSafe;
 }

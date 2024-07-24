@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
 import { UserService } from 'src/user/user.service';
@@ -56,12 +56,12 @@ export class AuthService {
       now - user.otpGeneratedTime.getTime() < 2 * 60 * 1000
     ) {
       const remainingSeconds = now - user.otpGeneratedTime.getTime();
-      return {
+      throw new BadRequestException({
         status: HttpStatus.CREATED,
         message: `please wait for ${Math.floor(
           this.expiersTime - remainingSeconds / 1000,
         )} second`,
-      };
+      });
     }
     const otpSecret = this.generateOtp(userInput.phoneNumber);
     await this.repo.update(
@@ -85,12 +85,17 @@ export class AuthService {
         message: 'wrong code!',
       };
     }
+    const userInfo = await this.userService.getUserByPhoneNumber(
+      user.phoneNumber,
+    );
 
+    delete userInfo.activationCode;
     const access_token = this.jwtService.sign(user);
     return {
       status: HttpStatus.OK,
       message: 'verified successfuly',
       access_token,
+      user: userInfo,
     };
   }
 
