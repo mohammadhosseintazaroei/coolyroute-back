@@ -13,6 +13,9 @@ export class EventModel {
   description?: string;
 
   @Field()
+  date: Date;
+
+  @Field()
   startTime: number;
 
   @Field()
@@ -29,6 +32,9 @@ export class CreateEventInput implements ICreateEvent {
 
   @Field()
   price: number;
+
+  @Field()
+  date: Date;
 
   @Field()
   startTime: number;
