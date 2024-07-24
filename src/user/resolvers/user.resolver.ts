@@ -17,7 +17,6 @@ export class UserResolver {
   @Query(() => UserModelSafe)
   @UseGuards(JwtAuthGuard)
   async userProfile(_, @Context() context): Promise<UserModelSafe> {
-    console.log(context.req.user);
     const profile = await this.service.profile(context.req.user);
     return profile;
   }
