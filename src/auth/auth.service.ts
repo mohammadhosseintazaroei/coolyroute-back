@@ -1,4 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
 import { UserService } from 'src/user/user.service';
@@ -80,10 +85,10 @@ export class AuthService {
     const userVerify = this.verifyOtp(user.phoneNumber, user.code);
 
     if (!userVerify) {
-      return {
+      throw new ForbiddenException({
         status: HttpStatus.FORBIDDEN,
         message: 'wrong code!',
-      };
+      });
     }
     const userInfo = await this.userService.getUserByPhoneNumber(
       user.phoneNumber,

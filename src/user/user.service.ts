@@ -33,7 +33,7 @@ export class UserService {
 
   async profile(user: VerifyOtp): Promise<UserModelSafe> {
     const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
-    delete foundUser.activationCode
+    delete foundUser.activationCode;
     if (foundUser) return foundUser;
   }
 }
