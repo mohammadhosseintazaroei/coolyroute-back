@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { ICreateCourse } from '../interfaces/event.interface';
+import { ICreateEvent } from '../interfaces/event.interface';
 
 @ObjectType()
 export class EventModel {
@@ -13,11 +13,14 @@ export class EventModel {
   description?: string;
 
   @Field()
-  price: number;
+  startTime: number;
+
+  @Field()
+  endTime: number;
 }
 
 @InputType()
-export class CreateCourseInput implements ICreateCourse {
+export class CreateEventInput implements ICreateEvent {
   @Field()
   title: string;
 
@@ -26,4 +29,10 @@ export class CreateCourseInput implements ICreateCourse {
 
   @Field()
   price: number;
+
+  @Field()
+  startTime: number;
+
+  @Field()
+  endTime: number;
 }
