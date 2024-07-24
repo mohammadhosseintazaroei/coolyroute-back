@@ -12,6 +12,7 @@ import { upperDirectiveTransformer } from './shared/common/directives/upper-case
 import { UserEntity } from './user/entities/user.entity';
 import { UsersModule } from './user/user.module';
 import { EventModule } from './events/event.module';
+import { EventEntity } from './events/entities/event.entity';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -50,7 +51,7 @@ const gqlConfig = [
       password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'coolyroute',
-      entities: [UserEntity],
+      entities: [UserEntity, EventEntity],
       synchronize: true,
       autoLoadEntities: true,
     }),
