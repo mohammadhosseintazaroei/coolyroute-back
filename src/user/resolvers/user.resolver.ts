@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Context, Query, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { UserModel } from '../models/user.model';
+import { UserModel, UserModelSafe } from '../models/user.model';
 import { UserService } from '../user.service';
 
 @Resolver(() => UserModel)
@@ -14,9 +14,9 @@ export class UserResolver {
     return users;
   }
 
-  @Query(() => UserModel)
+  @Query(() => UserModelSafe)
   @UseGuards(JwtAuthGuard)
-  async userProfile(_, @Context() context): Promise<UserModel> {
+  async userProfile(_, @Context() context): Promise<UserModelSafe> {
     console.log(context.req.user);
     const profile = await this.service.profile(context.req.user);
     return profile;
