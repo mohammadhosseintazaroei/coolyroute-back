@@ -38,7 +38,10 @@ export class GQLRoleGuard implements CanActivate {
       // requset is for admin only but user is not admin
       return false;
     }
-
+    if (roles.includes(RoleType.normal)) {
+      // skip if request role is normal
+      return true;
+    }
     const userRoles = await this.dataSource.manager.find(ACLEntity, {
       where: {
         userId: user.id,

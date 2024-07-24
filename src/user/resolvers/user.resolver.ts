@@ -1,10 +1,11 @@
-import { UseGuards } from '@nestjs/common';
 import { Context, Query, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { GQLAuth } from 'src/auth/auth.decorator';
+import { RoleType } from 'src/auth/roles.enum';
 import { UserModel, UserModelSafe } from '../models/user.model';
 import { UserService } from '../user.service';
 
 @Resolver(() => UserModel)
+@GQLAuth()
 export class UserResolver {
   constructor(private service: UserService) {}
 
@@ -15,7 +16,7 @@ export class UserResolver {
   }
 
   @Query(() => UserModelSafe)
-  @UseGuards(JwtAuthGuard)
+  @GQLAuth(RoleType.normal)
   async userProfile(_, @Context() context): Promise<UserModelSafe> {
     const profile = await this.service.profile(context.req.user);
     return profile;

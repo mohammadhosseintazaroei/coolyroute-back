@@ -4,12 +4,15 @@ import { LoginDto, VerifyOtp } from '../dto/auth.dto';
 import { LoginVerification, UserVeify } from '../models/auth.model';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../jwt-auth.guard';
+import { GQLAuth } from '../auth.decorator';
+import { RoleType } from '../roles.enum';
 
 @Resolver('Auth')
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
+  @GQLAuth(RoleType.normal)
   @Query(() => String)
   async checkAuth() {
     return 'success';
