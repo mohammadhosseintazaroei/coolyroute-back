@@ -1,18 +1,13 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { Repository } from 'typeorm';
 import { LoginDto, VerifyOtp } from './dto/auth.dto';
 import { LoginVerification, UserVeify } from './models/auth.model';
-import { UserEntity } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -61,12 +56,12 @@ export class AuthService {
       now - user.otpGeneratedTime.getTime() < 2 * 60 * 1000
     ) {
       const remainingSeconds = now - user.otpGeneratedTime.getTime();
-      throw new BadRequestException({
-        status: HttpStatus.CREATED,
+      return {
+        status: HttpStatus.ACCEPTED,
         message: `please wait for ${Math.floor(
           this.expiersTime - remainingSeconds / 1000,
         )} second`,
-      });
+      };
     }
     const otpSecret = this.generateOtp(userInput.phoneNumber);
     await this.repo.update(
@@ -78,7 +73,7 @@ export class AuthService {
     );
     return {
       status: HttpStatus.CREATED,
-      message: 'otpCode send successfuly',
+      message: 'کد فرستاده شده را وارد کنید',
     };
   }
   async verifyUser(user: VerifyOtp): Promise<UserVeify> {
