@@ -31,4 +31,4 @@ export class UserRealtionModel {
   user: UserModel;
 }
 @ObjectType()
-export class UserModelSafe extends OmitType(UserModel, ['activationCode']) {}
+export class UserModelSafe extends UserModel {}
