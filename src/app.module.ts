@@ -49,7 +49,7 @@ const gqlConfig = [
       username: 'postgres',
       password: process.env.DB_PASSWORD,
       database: 'postgres',
-      schema: 'ecotech',
+      schema: 'coolyroute',
       entities: [UserEntity],
       synchronize: true,
       autoLoadEntities: true,
