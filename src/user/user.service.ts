@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { VerifyOtp } from 'src/auth/dto/auth.dto';
+import { UserModelSafe } from './models/user.model';
 
 @Injectable()
 export class UserService {
@@ -30,8 +31,9 @@ export class UserService {
     };
   }
 
-  async profile(user: VerifyOtp): Promise<UserEntity> {
+  async profile(user: VerifyOtp): Promise<UserModelSafe> {
     const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
+    delete foundUser.activationCode;
     if (foundUser) return foundUser;
   }
 }

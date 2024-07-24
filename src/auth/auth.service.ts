@@ -1,13 +1,13 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { Repository } from 'typeorm';
 import { LoginDto, VerifyOtp } from './dto/auth.dto';
 import { LoginVerification, UserVeify } from './models/auth.model';
-import { UserEntity } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -57,7 +57,7 @@ export class AuthService {
     ) {
       const remainingSeconds = now - user.otpGeneratedTime.getTime();
       return {
-        status: HttpStatus.CREATED,
+        status: HttpStatus.ACCEPTED,
         message: `please wait for ${Math.floor(
           this.expiersTime - remainingSeconds / 1000,
         )} second`,
@@ -73,24 +73,29 @@ export class AuthService {
     );
     return {
       status: HttpStatus.CREATED,
-      message: 'otpCode send successfuly',
+      message: 'کد فرستاده شده را وارد کنید',
     };
   }
   async verifyUser(user: VerifyOtp): Promise<UserVeify> {
     const userVerify = this.verifyOtp(user.phoneNumber, user.code);
 
     if (!userVerify) {
-      return {
+      throw new ForbiddenException({
         status: HttpStatus.FORBIDDEN,
         message: 'wrong code!',
-      };
+      });
     }
+    const userInfo = await this.userService.getUserByPhoneNumber(
+      user.phoneNumber,
+    );
 
+    delete userInfo.activationCode;
     const access_token = this.jwtService.sign(user);
     return {
       status: HttpStatus.OK,
       message: 'verified successfuly',
       access_token,
+      user: userInfo,
     };
   }
 
