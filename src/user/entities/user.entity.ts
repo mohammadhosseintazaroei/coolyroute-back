@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IUser } from '../interfaces/user.interface';
+import { UserSkillEntity } from 'src/user-skill/user-skill.entity';
 
 @Entity()
 export class UserEntity implements IUser {
@@ -27,4 +28,7 @@ export class UserEntity implements IUser {
 
   @Column({ type: 'boolean', default: false })
   verify: boolean;
+
+  @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
+  userSkills: UserSkillEntity[];
 }

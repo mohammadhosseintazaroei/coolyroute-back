@@ -1,5 +1,6 @@
 import { Field, ObjectType, OmitType } from '@nestjs/graphql';
-import e from 'express';
+import { SkillRelationModel } from 'src/skill/models/skill.model';
+import { IUserSkill } from 'src/user-skill/interfaces/user.interface';
 
 @ObjectType()
 export class UserModel {
@@ -18,8 +19,16 @@ export class UserModel {
   @Field({ nullable: true })
   email?: string;
 
+  @Field(() => [SkillRelationModel], { nullable: true })
+  userSkills: IUserSkill[];
+}
+
+@ObjectType()
+export class UserRealtionModel {
   @Field({ nullable: true })
-  activationCode?: string;
+  id: number;
+  @Field({ nullable: true })
+  user: UserModel;
 }
 @ObjectType()
-export class UserModelSafe extends OmitType(UserModel, ['activationCode']) {}
+export class UserModelSafe extends UserModel {}

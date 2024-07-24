@@ -4,17 +4,20 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DirectiveLocation, GraphQLDirective } from 'graphql';
+import { AccessControlMiddleware } from './access-control/access-control.middleware';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/controller/auth.controller';
+import { EventEntity } from './events/entities/event.entity';
+import { EventModule } from './events/event.module';
+import { RoleModule } from './role/role.module';
 import { upperDirectiveTransformer } from './shared/common/directives/upper-case.directive';
+import { SkillEntity } from './skill/entities/skill.entity';
+import { SkillModule } from './skill/skill.module';
+import { UserSkillEntity } from './user-skill/user-skill.entity';
+import { UserSKillModule } from './user-skill/user-skill.module';
 import { UserEntity } from './user/entities/user.entity';
 import { UsersModule } from './user/user.module';
-import { EventModule } from './events/event.module';
-import { EventEntity } from './events/entities/event.entity';
-import { RoleModule } from './role/role.module';
-import { AccessControlMiddleware } from './access-control/access-control.middleware';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -47,7 +50,9 @@ const gqlConfig = [
     AuthModule,
     UsersModule,
     RoleModule,
+    SkillModule,
     EventModule,
+    UserSKillModule,
     ...gqlConfig,
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -57,9 +62,10 @@ const gqlConfig = [
       password: process.env.DB_PASSWORD,
       database: 'postgres',
       schema: 'coolyroute',
-      entities: [UserEntity, EventEntity],
+      entities: [SkillEntity, UserSkillEntity, EventEntity, UserEntity],
       synchronize: true,
       autoLoadEntities: true,
+      migrationsTransactionMode: 'each',
     }),
   ],
   controllers: [AuthController],

@@ -13,11 +13,14 @@ export class UserService {
   ) {}
 
   async findAllUsers(): Promise<UserEntity[]> {
-    return this.repo.find();
+    return this.repo.find({ relations: { userSkills: true } });
   }
 
   async getUserByPhoneNumber(phoneNumber: string): Promise<UserEntity> {
-    return this.repo.findOne({ where: { phoneNumber } });
+    return this.repo.findOne({
+      where: { phoneNumber },
+      relations: ['userSkills', 'userSkills.skill'],
+    });
   }
 
   async registerUserByPhoneNumber(phoneNumber: string) {
