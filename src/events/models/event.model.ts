@@ -1,8 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ICreateEvent } from '../interfaces/event.interface';
-import { FieldRole } from 'src/access-control/access-control.middleware';
-import { RoleType } from 'src/auth/roles.enum';
-import { GQLAuth } from 'src/auth/auth.decorator';
 @ObjectType()
 export class EventModel {
   @Field({ nullable: true })

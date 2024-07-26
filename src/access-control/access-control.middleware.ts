@@ -37,11 +37,11 @@ export const AccessControlMiddleware: FieldMiddleware = async (
     }
     throw new ForbiddenException('no-user-found');
   }
-  if ((user && user?.roles.includes(RoleType.admin)) || !roles) {
+  if ((user && user?.roles?.includes(RoleType.admin)) || !roles) {
     return next();
   }
 
-  if (!user.roles.find((userRole) => roles.includes(userRole as RoleType))) {
+  if (!user?.roles?.find((userRole) => roles.includes(userRole as RoleType))) {
     // or just "return null" to ignore
     throw new ForbiddenException(
       `User does not have sufficient permissions to access "${info.fieldName}" field.`,
