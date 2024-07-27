@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { SkillRelationModel } from 'src/skill/models/skill.model';
 import { IUserSkill } from 'src/user-skill/interfaces/user.interface';
 

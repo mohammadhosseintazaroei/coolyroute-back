@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UserEntity } from './entities/user.entity';
 import { VerifyOtp } from 'src/auth/dto/auth.dto';
+import { UserSkillEntity } from 'src/user-skill/user-skill.entity';
+import { Repository } from 'typeorm';
+import { CompleteFurtherInformationDto } from './dto/user.dto';
+import { UserEntity } from './entities/user.entity';
 import { UserModelSafe } from './models/user.model';
 
 @Injectable()
@@ -10,6 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private repo: Repository<UserEntity>,
+    @InjectRepository(UserSkillEntity)
+    private readonly userSkillRepo: Repository<UserSkillEntity>,
   ) {}
 
   async findAllUsers(): Promise<UserEntity[]> {
@@ -38,5 +42,19 @@ export class UserService {
     const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
     delete foundUser.activationCode;
     if (foundUser) return foundUser;
+  }
+
+  async completeFurtherInformation(
+    userId: number,
+    data: CompleteFurtherInformationDto,
+  ) {
+    const { firstName, lastName, skillId } = data;
+    await this.repo.update({ id: userId }, { firstName, lastName });
+    const createUserSkill = await this.userSkillRepo.create({
+      userId,
+      skillId,
+    });
+    await this.userSkillRepo.save(createUserSkill);
+    return true;
   }
 }
