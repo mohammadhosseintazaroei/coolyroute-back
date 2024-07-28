@@ -3,7 +3,7 @@ import { IUser } from 'src/user/interfaces/user.interface';
 import { UserRealtionModel } from 'src/user/models/user.model';
 @ObjectType()
 export class SkillModel {
-  @Field({ nullable: true })
+  @Field()
   id: number;
 
   @Field({ nullable: true })
