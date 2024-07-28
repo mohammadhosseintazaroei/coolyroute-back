@@ -1,10 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { GQLAuth } from '../auth.decorator';
 import { AuthService } from '../auth.service';
 import { LoginDto, VerifyOtp } from '../dto/auth.dto';
 import { LoginVerification, UserVeify } from '../models/auth.model';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../jwt-auth.guard';
-import { GQLAuth } from '../auth.decorator';
 import { RoleType } from '../roles.enum';
 
 @Resolver('Auth')

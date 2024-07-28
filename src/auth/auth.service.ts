@@ -53,14 +53,14 @@ export class AuthService {
     if (
       user &&
       user.activationCode &&
-      now - user.otpGeneratedTime.getTime() < 2 * 60 * 1000
+      now - user.otpGeneratedTime.getTime() < this.expiersTime * 1000
     ) {
-      const remainingSeconds = now - user.otpGeneratedTime.getTime();
+      const remainingSeconds =
+        this.expiersTime - (now - user.otpGeneratedTime.getTime()) / 1000;
       return {
         status: HttpStatus.ACCEPTED,
-        message: `please wait for ${Math.floor(
-          this.expiersTime - remainingSeconds / 1000,
-        )} second`,
+        message: `please wait for ${Math.floor(remainingSeconds)} second`,
+        remainingSeconds: Math.floor(remainingSeconds),
       };
     }
     const otpSecret = this.generateOtp(userInput.phoneNumber);
@@ -76,26 +76,35 @@ export class AuthService {
       message: 'کد فرستاده شده را وارد کنید',
     };
   }
-  async verifyUser(user: VerifyOtp): Promise<UserVeify> {
-    const userVerify = this.verifyOtp(user.phoneNumber, user.code);
+  async verifyUser({ code, phoneNumber }: VerifyOtp): Promise<UserVeify> {
+    const user = await this.userService.getUserByPhoneNumber(phoneNumber);
+    const now = await new Date().getTime();
 
+    if (now - user.otpGeneratedTime.getTime() > this.expiersTime * 1000) {
+      throw new ForbiddenException({
+        status: HttpStatus.FORBIDDEN,
+        message: 'کد فعلی منسوخ شده است، دوباره اقدام کنید',
+      });
+    }
+    const userVerify = this.verifyOtp(phoneNumber, code);
     if (!userVerify) {
       throw new ForbiddenException({
         status: HttpStatus.FORBIDDEN,
         message: 'wrong code!',
       });
     }
-    const userInfo = await this.userService.getUserByPhoneNumber(
-      user.phoneNumber,
-    );
 
-    delete userInfo.activationCode;
-    const access_token = this.jwtService.sign(user);
+    delete user.activationCode;
+    const access_token = this.jwtService.sign({
+      phoneNumber: user.phoneNumber,
+      id: user.id,
+    });
+
     return {
       status: HttpStatus.OK,
       message: 'verified successfuly',
       access_token,
-      user: userInfo,
+      user,
     };
   }
 
