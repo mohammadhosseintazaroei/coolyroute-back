@@ -41,7 +41,16 @@ export class UserService {
   async profile(user: VerifyOtp): Promise<UserModelSafe> {
     const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
     delete foundUser.activationCode;
-    if (foundUser) return foundUser;
+
+    if (foundUser)
+      return {
+        ...foundUser,
+        isComplete: !!(
+          foundUser.firstName &&
+          foundUser.lastName &&
+          foundUser.userSkills.length
+        ),
+      };
   }
 
   async completeFurtherInformation(
