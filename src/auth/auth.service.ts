@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
@@ -40,6 +45,16 @@ export class AuthService {
       window: 1,
     });
   }
+  async generateCodeForUser(phoneNumber: string) {
+    const otpSecret = this.generateOtp(phoneNumber);
+    await this.repo.update(
+      { phoneNumber },
+      {
+        activationCode: otpSecret,
+        otpGeneratedTime: new Date(),
+      },
+    );
+  }
 
   async login(userInput: LoginDto): Promise<LoginVerification> {
     const user = await this.userService.getUserByPhoneNumber(
@@ -63,14 +78,21 @@ export class AuthService {
         remainingSeconds: Math.floor(remainingSeconds),
       };
     }
-    const otpSecret = this.generateOtp(userInput.phoneNumber);
-    await this.repo.update(
-      { phoneNumber: userInput.phoneNumber },
-      {
-        activationCode: otpSecret,
-        otpGeneratedTime: new Date(),
-      },
+    await this.generateCodeForUser(userInput.phoneNumber);
+    return {
+      status: HttpStatus.CREATED,
+      message: 'کد فرستاده شده را وارد کنید',
+    };
+  }
+  async renew(userInput: LoginDto): Promise<LoginVerification> {
+    const user = await this.userService.getUserByPhoneNumber(
+      userInput.phoneNumber,
     );
+    if (!user) {
+      throw new NotFoundException('not-found user');
+    }
+
+    await this.generateCodeForUser(userInput.phoneNumber);
     return {
       status: HttpStatus.CREATED,
       message: 'کد فرستاده شده را وارد کنید',

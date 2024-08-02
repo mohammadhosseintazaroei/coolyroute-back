@@ -19,6 +19,11 @@ export class AuthResolver {
   async login(@Args('user') user: LoginDto): Promise<LoginVerification> {
     return await this.authService.login(user);
   }
+  // TODO : remove or fix it later :)
+  // @Query(() => LoginVerification)
+  // async renew(@Args('user') user: LoginDto): Promise<LoginVerification> {
+  //   return await this.authService.renew(user);
+  // }
 
   @Query(() => UserVeify)
   async verifyOtp(@Args('user') user: VerifyOtp): Promise<UserVeify> {
