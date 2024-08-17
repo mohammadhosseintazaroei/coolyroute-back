@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VerifyOtp } from 'src/auth/dto/auth.dto';
 import { UserSkillEntity } from 'src/user-skill/user-skill.entity';
@@ -41,7 +41,6 @@ export class UserService {
   async profile(user: VerifyOtp): Promise<UserModelSafe> {
     const foundUser = await this.getUserByPhoneNumber(user.phoneNumber);
     delete foundUser.activationCode;
-
     if (foundUser)
       return {
         ...foundUser,
@@ -51,6 +50,7 @@ export class UserService {
           foundUser.userSkills.length
         ),
       };
+    throw new NotFoundException('not-found user');
   }
 
   async completeFurtherInformation(
@@ -58,11 +58,20 @@ export class UserService {
     data: CompleteFurtherInformationDto,
   ) {
     const { firstName, lastName, skillId } = data;
-    await this.repo.update({ id: userId }, { firstName, lastName });
+    if (firstName || lastName) {
+      await this.repo.update({ id: userId }, { firstName, lastName });
+    }
+    const userSkill = await this.userSkillRepo.findOne({
+      where: { userId, skillId },
+    });
+    if (userSkill) {
+      return true;
+    }
     const createUserSkill = await this.userSkillRepo.create({
       userId,
       skillId,
     });
+
     await this.userSkillRepo.save(createUserSkill);
     return true;
   }
