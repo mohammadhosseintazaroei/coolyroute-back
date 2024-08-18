@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IEthResponse } from 'src/shared/types/response.interface';
 import { Repository } from 'typeorm';
@@ -14,7 +14,19 @@ export class EventService {
   ) {}
 
   async getALlEvents(): Promise<EventModel[]> {
-    return await this.repo.find();
+    return await this.repo.find({
+      order: {
+        id: 'ASC',
+      },
+    });
+  }
+
+  async getEventById(id: number): Promise<EventModel> {
+    const event = await this.repo.findOne({ where: { id } });
+    if (!event) {
+      throw new BadRequestException('event not found');
+    }
+    return event;
   }
 
   async createEvent(event: ICreateEvent): Promise<IEthResponse> {
