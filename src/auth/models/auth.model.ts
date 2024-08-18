@@ -25,6 +25,9 @@ export class LoginVerification {
 
   @Field(() => String)
   message: string;
+
+  @Field(() => Number, { nullable: true })
+  remainingSeconds?: number;
 }
 
 @ObjectType({ description: 'User Verify ' })

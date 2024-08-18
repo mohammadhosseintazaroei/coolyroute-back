@@ -1,4 +1,4 @@
-import { Field, ObjectType, OmitType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { SkillRelationModel } from 'src/skill/models/skill.model';
 import { IUserSkill } from 'src/user-skill/interfaces/user.interface';
 
@@ -31,4 +31,7 @@ export class UserRealtionModel {
   user: UserModel;
 }
 @ObjectType()
-export class UserModelSafe extends UserModel {}
+export class UserModelSafe extends UserModel {
+  @Field({ nullable: true })
+  isComplete?: boolean;
+}

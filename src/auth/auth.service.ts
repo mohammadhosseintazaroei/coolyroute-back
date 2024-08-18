@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
@@ -40,6 +45,16 @@ export class AuthService {
       window: 1,
     });
   }
+  async generateCodeForUser(phoneNumber: string) {
+    const otpSecret = this.generateOtp(phoneNumber);
+    await this.repo.update(
+      { phoneNumber },
+      {
+        activationCode: otpSecret,
+        otpGeneratedTime: new Date(),
+      },
+    );
+  }
 
   async login(userInput: LoginDto): Promise<LoginVerification> {
     const user = await this.userService.getUserByPhoneNumber(
@@ -53,49 +68,65 @@ export class AuthService {
     if (
       user &&
       user.activationCode &&
-      now - user.otpGeneratedTime.getTime() < 2 * 60 * 1000
+      now - user.otpGeneratedTime.getTime() < this.expiersTime * 1000
     ) {
-      const remainingSeconds = now - user.otpGeneratedTime.getTime();
+      const remainingSeconds =
+        this.expiersTime - (now - user.otpGeneratedTime.getTime()) / 1000;
       return {
         status: HttpStatus.ACCEPTED,
-        message: `please wait for ${Math.floor(
-          this.expiersTime - remainingSeconds / 1000,
-        )} second`,
+        message: `please wait for ${Math.floor(remainingSeconds)} second`,
+        remainingSeconds: Math.floor(remainingSeconds),
       };
     }
-    const otpSecret = this.generateOtp(userInput.phoneNumber);
-    await this.repo.update(
-      { phoneNumber: userInput.phoneNumber },
-      {
-        activationCode: otpSecret,
-        otpGeneratedTime: new Date(),
-      },
-    );
+    await this.generateCodeForUser(userInput.phoneNumber);
     return {
       status: HttpStatus.CREATED,
       message: 'کد فرستاده شده را وارد کنید',
     };
   }
-  async verifyUser(user: VerifyOtp): Promise<UserVeify> {
-    const userVerify = this.verifyOtp(user.phoneNumber, user.code);
+  async renew(userInput: LoginDto): Promise<LoginVerification> {
+    const user = await this.userService.getUserByPhoneNumber(
+      userInput.phoneNumber,
+    );
+    if (!user) {
+      throw new NotFoundException('not-found user');
+    }
 
+    await this.generateCodeForUser(userInput.phoneNumber);
+    return {
+      status: HttpStatus.CREATED,
+      message: 'کد فرستاده شده را وارد کنید',
+    };
+  }
+  async verifyUser({ code, phoneNumber }: VerifyOtp): Promise<UserVeify> {
+    const user = await this.userService.getUserByPhoneNumber(phoneNumber);
+    const now = await new Date().getTime();
+
+    if (now - user.otpGeneratedTime.getTime() > this.expiersTime * 1000) {
+      throw new ForbiddenException({
+        status: HttpStatus.FORBIDDEN,
+        message: 'کد فعلی منسوخ شده است، دوباره اقدام کنید',
+      });
+    }
+    const userVerify = this.verifyOtp(phoneNumber, code);
     if (!userVerify) {
       throw new ForbiddenException({
         status: HttpStatus.FORBIDDEN,
         message: 'wrong code!',
       });
     }
-    const userInfo = await this.userService.getUserByPhoneNumber(
-      user.phoneNumber,
-    );
 
-    delete userInfo.activationCode;
-    const access_token = this.jwtService.sign(user);
+    delete user.activationCode;
+    const access_token = this.jwtService.sign({
+      phoneNumber: user.phoneNumber,
+      id: user.id,
+    });
+
     return {
       status: HttpStatus.OK,
       message: 'verified successfuly',
       access_token,
-      user: userInfo,
+      user,
     };
   }
 

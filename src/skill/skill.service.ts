@@ -9,4 +9,12 @@ export class SkillService {
     @InjectRepository(SkillEntity)
     private repo: Repository<SkillEntity>,
   ) {}
+  async findAllSkills(): Promise<SkillEntity[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
 }
