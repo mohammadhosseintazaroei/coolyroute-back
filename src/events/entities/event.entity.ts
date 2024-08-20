@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IEvent } from '../interfaces/event.interface';
+import { EnrollmentEntity } from 'src/enrollment/enrollment.entity';
 
 @Entity()
 export class EventEntity implements IEvent {
@@ -23,4 +24,7 @@ export class EventEntity implements IEvent {
 
   @Column()
   endTime: number;
+
+  @OneToMany(() => EnrollmentEntity, (enrollment) => enrollment.event)
+  users: EnrollmentEntity[];
 }

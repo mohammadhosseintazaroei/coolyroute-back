@@ -1,14 +1,20 @@
-// // enrollment.model.ts
-// import { ObjectType, Field, ID } from '@nestjs/graphql';
+// enrollment.model.ts
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { IEvent } from 'src/events/interfaces/event.interface';
+import { EventModel } from 'src/events/models/event.model';
+import { ISKill } from 'src/skill/interfaces/skill.interface';
+import { SkillModel } from 'src/skill/models/skill.model';
+import { IUser } from 'src/user/interfaces/user.interface';
+import { UserModel } from 'src/user/models/user.model';
 
-// @ObjectType()
-// export class Enrollment {
-//   @Field(type => ID)
-//   enrollmentId: number;
+@ObjectType()
+export class EnrollmentModel {
+  @Field({ nullable: true })
+  id: number;
 
-//   @Field(type => Course)
-//   course: Course;
+  @Field(() => UserModel, { nullable: true })
+  user: IUser;
 
-//   @Field(type => User)
-//   user: User;
-// }
+  @Field(() => EventModel, { nullable: true })
+  event: IEvent;
+}

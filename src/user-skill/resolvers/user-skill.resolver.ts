@@ -9,7 +9,6 @@ export class UserSkillResolver {
 
   @Query(() => [UserSkillModel])
   async getAllUserSkill() {
-    const users = await this.service.getAllUserSKills();
-    return users;
+    return await this.service.getAllUserSKills();
   }
 }

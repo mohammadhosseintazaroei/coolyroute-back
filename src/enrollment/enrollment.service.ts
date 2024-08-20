@@ -8,4 +8,7 @@ export class EnrollmentService {
     @InjectRepository(EnrollmentEntity)
     private repo: Repository<EnrollmentEntity>,
   ) {}
+  async getAllEnrollments(): Promise<EnrollmentEntity[]> {
+    return await this.repo.find({ relations: ['event', 'user'] });
+  }
 }
