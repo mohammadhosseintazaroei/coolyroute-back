@@ -14,11 +14,14 @@ export class EventService {
   ) {}
 
   async getALlEvents(): Promise<EventModel[]> {
-    return await this.repo.find({
+    const event = await this.repo.find({
+      relations: { tickets: true },
       order: {
         id: 'ASC',
       },
     });
+    console.log(event.map((ticket) => ticket.tickets));
+    return event;
   }
 
   async getEventById(id: number): Promise<EventModel> {

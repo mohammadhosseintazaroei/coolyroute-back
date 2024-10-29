@@ -19,7 +19,7 @@ export class UserSkillEntity implements IUserSkill {
   userId: number;
   @Column()
   skillId: number;
-  @ManyToOne(() => UserEntity, (user) => user.events)
+  @ManyToOne(() => UserEntity, (user) => user.userSkills)
   @JoinColumn({ name: 'userId' })
   user: UserEntity;
 

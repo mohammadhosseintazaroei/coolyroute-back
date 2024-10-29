@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IEvent } from '../interfaces/event.interface';
-import { EnrollmentEntity } from 'src/enrollment/enrollment.entity';
+import { OrderEntity } from 'src/enrollment/entities/order.entity';
+import { EventTicketEntity } from './event-ticket.entity';
 
 @Entity()
 export class EventEntity implements IEvent {
@@ -25,6 +26,6 @@ export class EventEntity implements IEvent {
   @Column()
   endTime: number;
 
-  @OneToMany(() => EnrollmentEntity, (enrollment) => enrollment.event)
-  users: EnrollmentEntity[];
+  @OneToMany(() => EventTicketEntity, (ticket) => ticket.event)
+  tickets: EventTicketEntity[];
 }

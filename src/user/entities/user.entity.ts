@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IUser } from '../interfaces/user.interface';
 import { UserSkillEntity } from 'src/user-skill/user-skill.entity';
-import { EnrollmentEntity } from 'src/enrollment/enrollment.entity';
+import { OrderEntity } from 'src/enrollment/entities/order.entity';
 
 @Entity()
 export class UserEntity implements IUser {
@@ -32,6 +32,7 @@ export class UserEntity implements IUser {
 
   @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
   userSkills: UserSkillEntity[];
-  @OneToMany(() => EnrollmentEntity, (enrollment) => enrollment.user)
-  events: EnrollmentEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.user)
+  orders: OrderEntity[];
 }

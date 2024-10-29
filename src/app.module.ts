@@ -18,8 +18,8 @@ import { UserSkillEntity } from './user-skill/user-skill.entity';
 import { UserSKillModule } from './user-skill/user-skill.module';
 import { UserEntity } from './user/entities/user.entity';
 import { UsersModule } from './user/user.module';
-import { EnrollmentModule } from './enrollment/enrollment.module';
-import { EnrollmentEntity } from './enrollment/enrollment.entity';
+import { EnrollmentModule } from './enrollment/order.module';
+import { OrderEntity } from './enrollment/entities/order.entity';
 const gqlConfig = [
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
@@ -59,18 +59,18 @@ const gqlConfig = [
     ...gqlConfig,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD,
       database: 'postgres',
-      schema: 'coolyroute',
+      schema: process.env.DB_SCHEMA || 'coolyroute',
       entities: [
         SkillEntity,
         UserSkillEntity,
         EventEntity,
         UserEntity,
-        EnrollmentEntity,
+        OrderEntity,
       ],
       synchronize: true,
       autoLoadEntities: true,
