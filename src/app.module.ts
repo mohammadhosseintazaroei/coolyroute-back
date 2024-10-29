@@ -32,6 +32,7 @@ const gqlConfig = [
     //     }),
     //   ],
     // },
+    introspection: process.env.NODE_ENV !== 'production',
     context: ({ req, res }) => ({ req, res }),
     buildSchemaOptions: {
       fieldMiddleware: [AccessControlMiddleware],

@@ -14,6 +14,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   await app.listen(process.env.APP_PORT || 8080);
   console.log(`http://localhost:${process.env.APP_PORT || 8080}`);
+  console.log('hi');
   console.log(`http://localhost:${process.env.APP_PORT || 8080}/graphql`);
 }
 bootstrap();
